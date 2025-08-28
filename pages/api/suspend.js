@@ -2,12 +2,10 @@
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-
   try {
-    const results = { render: [], vercel: null };
+    const results = { render: [], vercel: null, backend: null };
 
     // 1) Suspend Render service(s)
-    // You can set RENDER_SERVICE_IDS as comma separated list
     const renderApiKey = process.env.RENDER_API_KEY;
     const serviceIds = (process.env.RENDER_SERVICE_IDS || "").split(",").map(s => s.trim()).filter(Boolean);
 
@@ -36,8 +34,12 @@ export default async function handler(req, res) {
         "Content-Type": "application/json"
       }
     });
-
     results.vercel = { status: v.status, ok: v.ok, body: await safeParse(v) };
+
+    // 3) Tell Furniture backend to set suspended = true
+    const backendUrl = process.env.FURNITURE_BACKEND_URL; // e.g. https://your-backend.onrender.com
+    const b = await fetch(`${backendUrl}/status/suspend`, { method: "POST" });
+    results.backend = { status: b.status, ok: b.ok, body: await safeParse(b) };
 
     res.status(200).json({ success: true, results });
   } catch (err) {
@@ -48,11 +50,11 @@ export default async function handler(req, res) {
 
 async function safeParse(resp) {
   try {
-    const text = await resp.text();  // read once
+    const text = await resp.text();
     try {
-      return JSON.parse(text);       // try parsing JSON
+      return JSON.parse(text);
     } catch {
-      return text;                   // fallback to raw text
+      return text;
     }
   } catch (e) {
     return null;
