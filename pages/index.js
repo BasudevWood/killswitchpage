@@ -12,11 +12,16 @@ const callApi = async (path) => {
   try {
     const res = await fetch(`/api/${path}`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      }
+      headers: { "Content-Type": "application/json" },
     });
     const json = await res.json();
+
+    // ✅ If redirect returned, go there immediately
+    if (json.redirect) {
+      window.location.href = json.redirect;
+      return; // stop further execution
+    }
+
     setMsg(JSON.stringify(json, null, 2));
   } catch (err) {
     setMsg("Error: " + err.message);
@@ -24,6 +29,7 @@ const callApi = async (path) => {
     setBusy(false);
   }
 };
+
 
 
   return (
