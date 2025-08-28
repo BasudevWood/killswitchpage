@@ -32,22 +32,17 @@ export default async function handler(req, res) {
           .map((s) => s.trim())
           .filter(Boolean);
 
-     for (const id of serviceIds) {
-  try {
-    const r = await fetch(`https://api.render.com/v1/services/${id}/suspend`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${renderApiKey}`,
-        Accept: "application/json",
-      },
-    });
-    const body = await safeParse(r);
-    console.log("🔎 Render suspend response:", { id, status: r.status, body });
-    results.render.push({ serviceId: id, status: r.status, ok: r.ok, body });
-  } catch (err) {
-    console.error(`❌ Error suspending Render service ${id}:`, err.message);
-  }
-}
+        for (const id of serviceIds) {
+          const r = await fetch(`https://api.render.com/v1/services/${id}/suspend`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${renderApiKey}`,
+              Accept: "application/json",
+            },
+          });
+          const body = await safeParse(r);
+          results.render.push({ serviceId: id, status: r.status, ok: r.ok, body });
+        }
 
         // Pause Vercel project
         const vercelProjectId = process.env.FURNITURE_PROJECT_ID;
