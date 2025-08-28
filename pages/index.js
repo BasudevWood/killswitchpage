@@ -5,28 +5,26 @@ export default function Home() {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
 
-  const callApi = async (path) => {
-    const secret = prompt("Enter admin secret (set in Vercel as KILLSWITCH_SECRET):");
-    if (!secret) return alert("Cancelled");
-    setBusy(true);
-    setMsg("Working...");
+const callApi = async (path) => {
+  setBusy(true);
+  setMsg("Working...");
 
-    try {
-      const res = await fetch(`/api/${path}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-kill-secret": secret
-        }
-      });
-      const json = await res.json();
-      setMsg(JSON.stringify(json, null, 2));
-    } catch (err) {
-      setMsg("Error: " + err.message);
-    } finally {
-      setBusy(false);
-    }
-  };
+  try {
+    const res = await fetch(`/api/${path}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+    const json = await res.json();
+    setMsg(JSON.stringify(json, null, 2));
+  } catch (err) {
+    setMsg("Error: " + err.message);
+  } finally {
+    setBusy(false);
+  }
+};
+
 
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", padding: 30 }}>

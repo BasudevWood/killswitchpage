@@ -2,8 +2,7 @@
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  const secret = req.headers["x-kill-secret"];
-  if (!secret || secret !== process.env.KILLSWITCH_SECRET) return res.status(401).json({ error: "Unauthorized" });
+
 
   try {
     const results = { vercel: null, render: [] };
