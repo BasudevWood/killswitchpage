@@ -26,7 +26,7 @@ export default async function handler(req, res) {
     }
 
     // 2) Pause Vercel project
-    const vercelProjectId = process.env.VERCEL_PROJECT_ID;
+    const vercelProjectId = process.env.FURNITURE_PROJECT_ID;
     const vercelToken = process.env.VERCEL_TOKEN;
     let vercelUrl = `https://api.vercel.com/v1/projects/${vercelProjectId}/pause`;
     if (process.env.VERCEL_TEAM_ID) vercelUrl += `?teamId=${encodeURIComponent(process.env.VERCEL_TEAM_ID)}`;
