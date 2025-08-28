@@ -48,6 +48,15 @@ export default async function handler(req, res) {
   }
 }
 
-async function safeParse(resp){
-  try { return await resp.json(); } catch(e) { return await resp.text(); }
+async function safeParse(resp) {
+  try {
+    const text = await resp.text();  // read once
+    try {
+      return JSON.parse(text);       // try parsing JSON
+    } catch {
+      return text;                   // fallback to raw text
+    }
+  } catch (e) {
+    return null;
+  }
 }
